@@ -17,4 +17,5 @@ Repositório front-end do projeto de chamados.
 - TypeScript
 - Tanstack Query
 - Next Auth
+- Docker e Docker Compose
 - Cypress para testes E2E (opcional)
