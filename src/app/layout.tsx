@@ -16,7 +16,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chamados",
+  title: {
+    default: "Chamados",
+    template: "%s | Chamados",
+  },
   description: "Acompanhamento e gerenciamento de chamados dos técnicos de monitoramento.",
 };
 

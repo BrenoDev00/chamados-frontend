@@ -1,5 +1,7 @@
 import { signOut } from "next-auth/react";
 
+import { routes } from "@/config/routes";
+
 const BACKEND_PROXY_PATH = "/api/backend";
 
 export class ApiError extends Error {
@@ -30,7 +32,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   if (response.status === 401) {
-    await signOut({ callbackUrl: "/login" });
+    await signOut({ callbackUrl: routes.login });
   }
 
   if (!response.ok) {
