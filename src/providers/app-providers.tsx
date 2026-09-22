@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ApiError } from "@/lib/api-client";
 
 let browserQueryClient: QueryClient | undefined;
@@ -34,7 +35,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <SessionProvider>
       <QueryClientProvider client={getQueryClient()}>
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <Toaster theme="dark" richColors position="top-right" />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

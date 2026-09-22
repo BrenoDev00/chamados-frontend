@@ -1,7 +1,7 @@
-export default function HomePage() {
-  return (
-    <main className="flex flex-1 items-center justify-center">
-      <h1 className="text-2xl font-semibold">Chamados</h1>
-    </main>
-  );
+import { redirect } from "next/navigation";
+
+import { HOME_ROUTE } from "@/config/routes";
+
+export default function RootPage() {
+  redirect(HOME_ROUTE);
 }
