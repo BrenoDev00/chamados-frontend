@@ -43,7 +43,7 @@ export function TechniciansView() {
           <TableBody>
             {isPending && <TableSkeletonRows columns={COLUMN_COUNT} rows={4} />}
 
-            {isError && (
+            {isError && !technicians && (
               <TableMessageRow colSpan={COLUMN_COUNT} onRetry={() => refetch()}>
                 Não foi possível carregar os técnicos.
               </TableMessageRow>

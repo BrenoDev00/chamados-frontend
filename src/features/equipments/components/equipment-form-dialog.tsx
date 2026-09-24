@@ -2,6 +2,7 @@
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
 import { FormDialogFooter } from "@/components/shared/form-dialog-footer";
@@ -34,8 +35,11 @@ type EquipmentFormDialogProps = {
 };
 
 export function EquipmentFormDialog({ equipment, onClose }: EquipmentFormDialogProps) {
+  const { data: session } = useSession();
   const saveEquipment = useSaveEquipment();
   const isEditing = !!equipment;
+  // na edição mantém o técnico responsável original; no cadastro usa o técnico logado
+  const technicianId = equipment?.technicianId ?? session?.user.id;
 
   const {
     register,
@@ -53,8 +57,10 @@ export function EquipmentFormDialog({ equipment, onClose }: EquipmentFormDialogP
   });
 
   function onSubmit(values: EquipmentFormValues) {
+    if (!technicianId) return;
+
     saveEquipment.mutate(
-      { id: equipment?.id, values },
+      { id: equipment?.id, input: { ...values, technicianId } },
       {
         onSuccess: () => {
           toast.success(
@@ -152,7 +158,7 @@ export function EquipmentFormDialog({ equipment, onClose }: EquipmentFormDialogP
             </Field>
           </FieldGroup>
 
-          <FormDialogFooter isSubmitting={isSubmitting} />
+          <FormDialogFooter isSubmitting={isSubmitting} isSubmitDisabled={!technicianId} />
         </form>
       </DialogContent>
     </Dialog>

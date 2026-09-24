@@ -22,7 +22,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { routes } from "@/config/routes";
-import { useUpdateTechnician } from "@/features/technicians/hooks";
+import {
+  isOwnEmailChange,
+  useUpdateTechnician,
+} from "@/features/technicians/hooks";
 import {
   technicianFormSchema,
   type TechnicianFormValues,
@@ -61,12 +64,7 @@ export function TechnicianFormDialog({
       { id: technician.id, input: values },
       {
         onSuccess: async (updated) => {
-          const changedOwnEmail =
-            technician.id === session?.user.id &&
-            updated.email.toLowerCase() !== technician.email.toLowerCase();
-
-          // o token da sessão fica vinculado ao e-mail antigo, então é preciso entrar novamente
-          if (changedOwnEmail) {
+          if (isOwnEmailChange(session, updated)) {
             toast.info("Seu e-mail foi alterado. Entre novamente com o novo e-mail.");
             await signOut({ callbackUrl: routes.login });
             return;

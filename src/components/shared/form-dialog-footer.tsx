@@ -5,9 +5,13 @@ import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 
 type FormDialogFooterProps = {
   isSubmitting: boolean;
+  isSubmitDisabled?: boolean;
 };
 
-export function FormDialogFooter({ isSubmitting }: FormDialogFooterProps) {
+export function FormDialogFooter({
+  isSubmitting,
+  isSubmitDisabled = false,
+}: FormDialogFooterProps) {
   return (
     <DialogFooter>
       <DialogClose asChild>
@@ -15,7 +19,7 @@ export function FormDialogFooter({ isSubmitting }: FormDialogFooterProps) {
           Cancelar
         </Button>
       </DialogClose>
-      <Button type="submit" disabled={isSubmitting}>
+      <Button type="submit" disabled={isSubmitting || isSubmitDisabled}>
         {isSubmitting ? (
           <LoaderCircle className="animate-spin" aria-hidden />
         ) : (

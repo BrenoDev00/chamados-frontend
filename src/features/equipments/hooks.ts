@@ -4,7 +4,6 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 import {
   createEquipment,
@@ -13,7 +12,7 @@ import {
   equipmentQueries,
   updateEquipment,
 } from "@/features/equipments/api";
-import type { EquipmentFormValues } from "@/features/equipments/schemas";
+import type { EquipmentInput } from "@/features/equipments/types";
 import { ticketKeys } from "@/features/tickets/api";
 
 export function useEquipments(searchTerm = "") {
@@ -35,17 +34,11 @@ function useInvalidateEquipmentsAndTickets() {
 }
 
 export function useSaveEquipment() {
-  const { data: session } = useSession();
   const invalidate = useInvalidateEquipmentsAndTickets();
 
   return useMutation({
-    mutationFn: ({ id, values }: { id?: string; values: EquipmentFormValues }) => {
-      if (!session) throw new Error("Sessão não carregada.");
-
-      const input = { ...values, technicianId: session.user.id };
-
-      return id ? updateEquipment(id, input) : createEquipment(input);
-    },
+    mutationFn: ({ id, input }: { id?: string; input: EquipmentInput }) =>
+      id ? updateEquipment(id, input) : createEquipment(input),
     onSuccess: invalidate,
   });
 }

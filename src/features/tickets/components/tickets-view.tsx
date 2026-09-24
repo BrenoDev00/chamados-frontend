@@ -96,7 +96,7 @@ export function TicketsView() {
           <TableBody>
             {isPending && <TableSkeletonRows columns={COLUMN_COUNT} />}
 
-            {isError && (
+            {isError && !tickets && (
               <TableMessageRow colSpan={COLUMN_COUNT} onRetry={() => refetch()}>
                 Não foi possível carregar os chamados.
               </TableMessageRow>

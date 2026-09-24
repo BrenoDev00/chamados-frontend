@@ -91,7 +91,7 @@ export function EquipmentsView() {
           <TableBody>
             {isPending && <TableSkeletonRows columns={COLUMN_COUNT} />}
 
-            {isError && (
+            {isError && !data && (
               <TableMessageRow colSpan={COLUMN_COUNT} onRetry={() => refetch()}>
                 Não foi possível carregar os equipamentos.
               </TableMessageRow>
