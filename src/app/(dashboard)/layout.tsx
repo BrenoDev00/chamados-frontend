@@ -14,13 +14,13 @@ export default function DashboardLayout({
   return (
     <SidebarProvider style={{ "--sidebar-width": "13rem" } as CSSProperties}>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="min-w-0">
         <header className="flex items-center gap-2 border-b px-4 py-3 md:hidden">
           <SidebarTrigger />
           <Cog className="size-5" aria-hidden />
           <span className="font-semibold">Chamados</span>
         </header>
-        <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">{children}</div>
+        <div className="flex min-w-0 flex-1 flex-col gap-6 p-4 md:p-8">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

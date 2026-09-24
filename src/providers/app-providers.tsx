@@ -36,7 +36,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <SessionProvider>
       <QueryClientProvider client={getQueryClient()}>
         <TooltipProvider>{children}</TooltipProvider>
-        <Toaster theme="dark" richColors position="top-right" />
+        <Toaster theme="dark" richColors position="bottom-right" />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </SessionProvider>
