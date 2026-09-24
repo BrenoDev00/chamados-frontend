@@ -14,6 +14,7 @@ import {
   updateEquipment,
 } from "@/features/equipments/api";
 import type { EquipmentFormValues } from "@/features/equipments/schemas";
+import { ticketKeys } from "@/features/tickets/api";
 
 export function useEquipments(searchTerm = "") {
   return useQuery({
@@ -22,15 +23,20 @@ export function useEquipments(searchTerm = "") {
   });
 }
 
-function useInvalidateEquipments() {
+// chamados exibem dados do equipamento e são excluídos junto com ele
+function useInvalidateEquipmentsAndTickets() {
   const queryClient = useQueryClient();
 
-  return () => queryClient.invalidateQueries({ queryKey: equipmentKeys.all });
+  return () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: equipmentKeys.all }),
+      queryClient.invalidateQueries({ queryKey: ticketKeys.all }),
+    ]);
 }
 
 export function useSaveEquipment() {
   const { data: session } = useSession();
-  const invalidate = useInvalidateEquipments();
+  const invalidate = useInvalidateEquipmentsAndTickets();
 
   return useMutation({
     mutationFn: ({ id, values }: { id?: string; values: EquipmentFormValues }) => {
@@ -45,7 +51,7 @@ export function useSaveEquipment() {
 }
 
 export function useDeleteEquipment() {
-  const invalidate = useInvalidateEquipments();
+  const invalidate = useInvalidateEquipmentsAndTickets();
 
   return useMutation({
     mutationFn: deleteEquipment,
