@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/page-header";
+import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import { SearchInput } from "@/components/shared/search-input";
 import { TableCard } from "@/components/shared/table-card";
 import {
@@ -21,9 +23,10 @@ import {
 } from "@/components/ui/table";
 import { TicketFormDialog } from "@/features/tickets/components/ticket-form-dialog";
 import { TicketStatusBadge } from "@/features/tickets/components/ticket-status-badge";
-import { useTickets } from "@/features/tickets/hooks";
+import { useDeleteTicket, useTickets } from "@/features/tickets/hooks";
 import type { Ticket } from "@/features/tickets/types";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { showErrorToast } from "@/lib/errors";
 import { formatDate, formatTime, pluralize } from "@/lib/format";
 
 const COLUMNS = [
@@ -50,6 +53,7 @@ export function TicketsView() {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebouncedValue(searchTerm.trim());
   const [formDialog, setFormDialog] = useState<FormDialogState>(null);
+  const [deletingTicket, setDeletingTicket] = useState<Ticket | null>(null);
 
   const {
     data: tickets,
@@ -58,6 +62,19 @@ export function TicketsView() {
     isFetching,
     refetch,
   } = useTickets(debouncedSearchTerm);
+  const deleteTicket = useDeleteTicket();
+
+  function handleDelete() {
+    if (!deletingTicket) return;
+
+    deleteTicket.mutate(deletingTicket.id, {
+      onSuccess: () => {
+        toast.success("Chamado excluído com sucesso.");
+        setDeletingTicket(null);
+      },
+      onError: (error) => showErrorToast("Não foi possível excluir o chamado.", error),
+    });
+  }
 
   return (
     <>
@@ -139,14 +156,25 @@ export function TicketsView() {
                   {ticket.observations ?? "—"}
                 </TableCell>
                 <TableCell className="px-4 text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={`Editar chamado ${ticket.idChamado}`}
-                    onClick={() => setFormDialog({ ticket })}
-                  >
-                    <Pencil aria-hidden />
-                  </Button>
+                  <div className="flex justify-end gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={`Editar chamado ${ticket.idChamado}`}
+                      onClick={() => setFormDialog({ ticket })}
+                    >
+                      <Pencil aria-hidden />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-destructive hover:text-destructive"
+                      aria-label={`Excluir chamado ${ticket.idChamado}`}
+                      onClick={() => setDeletingTicket(ticket)}
+                    >
+                      <Trash2 aria-hidden />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -161,6 +189,13 @@ export function TicketsView() {
           onClose={() => setFormDialog(null)}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={!!deletingTicket}
+        onOpenChange={(open) => !open && setDeletingTicket(null)}
+        onConfirm={handleDelete}
+        isDeleting={deleteTicket.isPending}
+      />
     </>
   );
 }

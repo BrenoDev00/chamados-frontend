@@ -7,6 +7,7 @@ import {
 
 import {
   createTicket,
+  deleteTicket,
   ticketKeys,
   ticketQueries,
   updateTicket,
@@ -26,6 +27,15 @@ export function useSaveTicket() {
   return useMutation({
     mutationFn: ({ id, input }: { id?: string; input: TicketInput }) =>
       id ? updateTicket(id, input) : createTicket(input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ticketKeys.all }),
+  });
+}
+
+export function useDeleteTicket() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteTicket,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ticketKeys.all }),
   });
 }

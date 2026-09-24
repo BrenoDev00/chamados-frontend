@@ -7,7 +7,7 @@ Repositório front-end do projeto de chamados.
 
 ## Funcionalidades
 - Autenticação com e-mail institucional e senha (JWT emitido pela API).
-- Chamados: listar, cadastrar, editar, atualizar status e pesquisar por ID do chamado ou ID Sefit do equipamento.
+- Chamados: listar, cadastrar, editar, atualizar status, excluir e pesquisar por ID do chamado ou ID Sefit do equipamento.
 - Equipamentos: listar, cadastrar, editar, excluir e pesquisar por ID Sefit ou local/via.
 - Técnicos: listar e editar nome, e-mail e turno.
 

@@ -26,3 +26,7 @@ export function createTicket(input: TicketInput) {
 export function updateTicket(id: string, input: TicketInput) {
   return apiClient.put<Ticket>(`/open-tickets/${id}`, input);
 }
+
+export function deleteTicket(id: string) {
+  return apiClient.delete(`/open-tickets/${id}`);
+}
