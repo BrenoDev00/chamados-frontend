@@ -18,6 +18,7 @@ type ConfirmDeleteDialogProps = {
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
   isDeleting: boolean;
+  itemLabel?: string;
   warning?: string;
 };
 
@@ -26,6 +27,7 @@ export function ConfirmDeleteDialog({
   onOpenChange,
   onConfirm,
   isDeleting,
+  itemLabel,
   warning,
 }: ConfirmDeleteDialogProps) {
   return (
@@ -37,8 +39,13 @@ export function ConfirmDeleteDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
           <AlertDialogDescription>
-            Tem certeza que deseja excluir este registro? Esta ação não pode ser
-            desfeita.
+            Tem certeza que deseja excluir{" "}
+            {itemLabel ? (
+              <strong className="font-semibold text-foreground">{itemLabel}</strong>
+            ) : (
+              "este registro"
+            )}
+            ? Esta ação não pode ser desfeita.
             {warning && <span className="mt-2 block font-medium">{warning}</span>}
           </AlertDialogDescription>
         </AlertDialogHeader>

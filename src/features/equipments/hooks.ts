@@ -43,11 +43,12 @@ export function useSaveEquipment() {
   });
 }
 
+// também recarrega em caso de erro (ex.: equipamento já excluído por outro técnico)
 export function useDeleteEquipment() {
   const invalidate = useInvalidateEquipmentsAndTickets();
 
   return useMutation({
     mutationFn: deleteEquipment,
-    onSuccess: invalidate,
+    onSettled: invalidate,
   });
 }

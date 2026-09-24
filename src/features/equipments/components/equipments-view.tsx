@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { MapPin, Pencil, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
@@ -26,7 +25,7 @@ import { EquipmentFormDialog } from "@/features/equipments/components/equipment-
 import { useDeleteEquipment, useEquipments } from "@/features/equipments/hooks";
 import type { Equipment } from "@/features/equipments/types";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
-import { showErrorToast } from "@/lib/errors";
+import { useDeleteConfirmation } from "@/hooks/use-delete-confirmation";
 import { pluralize } from "@/lib/format";
 
 const COLUMN_COUNT = 5;
@@ -37,23 +36,13 @@ export function EquipmentsView() {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebouncedValue(searchTerm.trim());
   const [formDialog, setFormDialog] = useState<FormDialogState>(null);
-  const [deletingEquipment, setDeletingEquipment] = useState<Equipment | null>(null);
 
   const { data, isPending, isError, isFetching, refetch } =
     useEquipments(debouncedSearchTerm);
-  const deleteEquipment = useDeleteEquipment();
-
-  function handleDelete() {
-    if (!deletingEquipment) return;
-
-    deleteEquipment.mutate(deletingEquipment.id, {
-      onSuccess: () => {
-        toast.success("Equipamento excluído com sucesso.");
-        setDeletingEquipment(null);
-      },
-      onError: (error) => showErrorToast("Não foi possível excluir o equipamento.", error),
-    });
-  }
+  const equipmentDeletion = useDeleteConfirmation<Equipment>(useDeleteEquipment(), {
+    success: "Equipamento excluído com sucesso.",
+    error: "Não foi possível excluir o equipamento.",
+  });
 
   return (
     <>
@@ -137,7 +126,7 @@ export function EquipmentsView() {
                       size="icon-sm"
                       className="text-destructive hover:text-destructive"
                       aria-label={`Excluir equipamento ${equipment.idSefit}`}
-                      onClick={() => setDeletingEquipment(equipment)}
+                      onClick={() => equipmentDeletion.request(equipment)}
                     >
                       <Trash2 aria-hidden />
                     </Button>
@@ -158,10 +147,15 @@ export function EquipmentsView() {
       )}
 
       <ConfirmDeleteDialog
-        open={!!deletingEquipment}
-        onOpenChange={(open) => !open && setDeletingEquipment(null)}
-        onConfirm={handleDelete}
-        isDeleting={deleteEquipment.isPending}
+        open={!!equipmentDeletion.target}
+        onOpenChange={(open) => !open && equipmentDeletion.cancel()}
+        onConfirm={equipmentDeletion.confirm}
+        isDeleting={equipmentDeletion.isDeleting}
+        itemLabel={
+          equipmentDeletion.target
+            ? `o equipamento ${equipmentDeletion.target.idSefit}`
+            : undefined
+        }
         warning="Os chamados vinculados a este equipamento também serão excluídos."
       />
     </>

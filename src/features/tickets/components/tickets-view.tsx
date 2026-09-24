@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
@@ -26,7 +25,7 @@ import { TicketStatusBadge } from "@/features/tickets/components/ticket-status-b
 import { useDeleteTicket, useTickets } from "@/features/tickets/hooks";
 import type { Ticket } from "@/features/tickets/types";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
-import { showErrorToast } from "@/lib/errors";
+import { useDeleteConfirmation } from "@/hooks/use-delete-confirmation";
 import { formatDate, formatTime, pluralize } from "@/lib/format";
 
 const COLUMNS = [
@@ -53,7 +52,6 @@ export function TicketsView() {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebouncedValue(searchTerm.trim());
   const [formDialog, setFormDialog] = useState<FormDialogState>(null);
-  const [deletingTicket, setDeletingTicket] = useState<Ticket | null>(null);
 
   const {
     data: tickets,
@@ -62,19 +60,10 @@ export function TicketsView() {
     isFetching,
     refetch,
   } = useTickets(debouncedSearchTerm);
-  const deleteTicket = useDeleteTicket();
-
-  function handleDelete() {
-    if (!deletingTicket) return;
-
-    deleteTicket.mutate(deletingTicket.id, {
-      onSuccess: () => {
-        toast.success("Chamado excluído com sucesso.");
-        setDeletingTicket(null);
-      },
-      onError: (error) => showErrorToast("Não foi possível excluir o chamado.", error),
-    });
-  }
+  const ticketDeletion = useDeleteConfirmation<Ticket>(useDeleteTicket(), {
+    success: "Chamado excluído com sucesso.",
+    error: "Não foi possível excluir o chamado.",
+  });
 
   return (
     <>
@@ -170,7 +159,7 @@ export function TicketsView() {
                       size="icon-sm"
                       className="text-destructive hover:text-destructive"
                       aria-label={`Excluir chamado ${ticket.idChamado}`}
-                      onClick={() => setDeletingTicket(ticket)}
+                      onClick={() => ticketDeletion.request(ticket)}
                     >
                       <Trash2 aria-hidden />
                     </Button>
@@ -191,10 +180,11 @@ export function TicketsView() {
       )}
 
       <ConfirmDeleteDialog
-        open={!!deletingTicket}
-        onOpenChange={(open) => !open && setDeletingTicket(null)}
-        onConfirm={handleDelete}
-        isDeleting={deleteTicket.isPending}
+        open={!!ticketDeletion.target}
+        onOpenChange={(open) => !open && ticketDeletion.cancel()}
+        onConfirm={ticketDeletion.confirm}
+        isDeleting={ticketDeletion.isDeleting}
+        itemLabel={ticketDeletion.target ? `o chamado #${ticketDeletion.target.idChamado}` : undefined}
       />
     </>
   );

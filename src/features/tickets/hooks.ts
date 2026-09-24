@@ -21,21 +21,28 @@ export function useTickets(searchTerm = "") {
   });
 }
 
-export function useSaveTicket() {
+function useInvalidateTickets() {
   const queryClient = useQueryClient();
+
+  return () => queryClient.invalidateQueries({ queryKey: ticketKeys.all });
+}
+
+export function useSaveTicket() {
+  const invalidate = useInvalidateTickets();
 
   return useMutation({
     mutationFn: ({ id, input }: { id?: string; input: TicketInput }) =>
       id ? updateTicket(id, input) : createTicket(input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ticketKeys.all }),
+    onSuccess: invalidate,
   });
 }
 
+// também recarrega em caso de erro (ex.: chamado já excluído por outro técnico)
 export function useDeleteTicket() {
-  const queryClient = useQueryClient();
+  const invalidate = useInvalidateTickets();
 
   return useMutation({
     mutationFn: deleteTicket,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ticketKeys.all }),
+    onSettled: invalidate,
   });
 }
