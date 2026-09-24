@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { PageHeader } from "@/components/layout/page-header";
+import { EquipmentsView } from "@/features/equipments/components/equipments-view";
 
 export const metadata: Metadata = {
   title: "Equipamentos",
 };
 
 export default function EquipmentsPage() {
-  return <PageHeader title="Equipamentos" />;
+  return <EquipmentsView />;
 }
