@@ -29,5 +29,6 @@ Repositório front-end do projeto de chamados.
 
 ## Como executar a aplicação full stack
 
-É necessário incluir um arquivo [docker-compose.yaml](./docs/infra/docker-compose.txt) (infra) e um arquivo [initialize.sh](./docs/infra/initialize.txt) (instancia os containers da aplicação) na raiz da aplicação e executar o script initialize. Também é necessário incluir um arquivo .env conforme exemplos dos .env.example na raiz de cada repositório, e preencher as variáveis de ambiente.
-Observação: as pastas locais do front-end e back-end devem se chamar frontend e backend, respectivamente.
+- É necessário incluir um arquivo [docker-compose.yaml](./docs/infra/docker-compose.txt) (infra) e um arquivo [initialize.sh](./docs/infra/initialize.txt) (instancia os containers da aplicação) na raiz da aplicação e executar o script initialize.
+- Também é necessário incluir um arquivo .env conforme exemplos dos .env.example na raiz de cada repositório, e preencher as variáveis de ambiente.
+- Observação: as pastas locais do front-end e back-end devem se chamar frontend e backend, respectivamente.
