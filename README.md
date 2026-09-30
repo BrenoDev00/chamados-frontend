@@ -27,7 +27,8 @@ Repositório front-end do projeto de chamados.
 
 ## [Repositório back-end](https://github.com/BrenoDev00/chamados-backend)
 
-### Para rodar toda a aplicação, é necessário incluir um arquivo docker-compose.yaml (infra) e um arquivo initialize.sh (instancia os containers da aplicação) na raiz da aplicação e executar o script initialize. Também é necessário incluir um arquivo .env conforme exemplos do .env.example na raiz de cada repositório, e preencher as variáveis de ambiente.
+### Como rodar a aplicação full stack
+É necessário incluir um arquivo docker-compose.yaml (infra) e um arquivo initialize.sh (instancia os containers da aplicação) na raiz da aplicação e executar o script initialize. Também é necessário incluir um arquivo .env conforme exemplos do .env.example na raiz de cada repositório, e preencher as variáveis de ambiente.
 
 ### script initialize:
 #!/bin/bash
