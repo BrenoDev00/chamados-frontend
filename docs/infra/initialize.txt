@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Inicializando aplicação..."
+
+docker compose --env-file backend/.env --env-file frontend/.env up --build
