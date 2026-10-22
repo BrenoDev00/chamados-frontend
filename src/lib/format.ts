@@ -10,7 +10,3 @@ export function formatDate(isoDate: string | null): string {
 export function formatTime(time: string | null): string {
   return time ? time.slice(0, 5) : "—";
 }
-
-export function pluralize(count: number, singular: string, plural: string) {
-  return `${count} ${count === 1 ? singular : plural}`;
-}

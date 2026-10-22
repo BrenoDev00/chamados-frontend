@@ -1,4 +1,5 @@
 import type { EquipmentType } from "@/features/equipments/types";
+import type { PaginatedList } from "@/lib/pagination";
 
 export const TICKET_STATUSES = ["Em andamento", "Finalizado"] as const;
 
@@ -35,3 +36,5 @@ export type TicketInput = {
   endTime: string | null;
   observations: string | null;
 };
+
+export type TicketList = PaginatedList<Ticket>;

@@ -1,3 +1,5 @@
+import type { PaginatedList } from "@/lib/pagination";
+
 export const EQUIPMENT_TYPES = ["WIM", "OCR"] as const;
 
 export type EquipmentType = (typeof EQUIPMENT_TYPES)[number];
@@ -11,9 +13,6 @@ export type Equipment = {
   technicianId: string;
 };
 
-export type EquipmentList = {
-  total: number;
-  items: Equipment[];
-};
+export type EquipmentList = PaginatedList<Equipment>;
 
 export type EquipmentInput = Omit<Equipment, "id">;

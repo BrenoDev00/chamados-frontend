@@ -1,21 +1,30 @@
 import { queryOptions } from "@tanstack/react-query";
 
 import { apiClient } from "@/lib/api-client";
-import type { Ticket, TicketInput } from "@/features/tickets/types";
+import type { Ticket, TicketInput, TicketList } from "@/features/tickets/types";
+
+// mesmo tamanho padrão da API, enviado explicitamente para o cálculo de páginas
+export const TICKETS_PAGE_SIZE = 20;
 
 export const ticketKeys = {
   all: ["tickets"] as const,
-  list: (searchTerm: string) => [...ticketKeys.all, "list", searchTerm] as const,
+  list: (searchTerm: string, page: number) =>
+    [...ticketKeys.all, "list", { searchTerm, page }] as const,
 };
 
 export const ticketQueries = {
-  list: (searchTerm = "") =>
+  list: (searchTerm: string, page: number) =>
     queryOptions({
-      queryKey: ticketKeys.list(searchTerm),
-      queryFn: () =>
-        apiClient.get<Ticket[]>(
-          `/open-tickets?searchTerm=${encodeURIComponent(searchTerm)}`,
-        ),
+      queryKey: ticketKeys.list(searchTerm, page),
+      queryFn: () => {
+        const params = new URLSearchParams({
+          searchTerm,
+          page: String(page),
+          size: String(TICKETS_PAGE_SIZE),
+        });
+
+        return apiClient.get<TicketList>(`/open-tickets?${params}`);
+      },
     }),
 };
 

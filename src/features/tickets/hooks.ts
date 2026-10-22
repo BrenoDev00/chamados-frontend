@@ -14,9 +14,9 @@ import {
 } from "@/features/tickets/api";
 import type { TicketInput } from "@/features/tickets/types";
 
-export function useTickets(searchTerm = "") {
+export function useTickets(searchTerm: string, page: number) {
   return useQuery({
-    ...ticketQueries.list(searchTerm),
+    ...ticketQueries.list(searchTerm, page),
     placeholderData: keepPreviousData,
   });
 }

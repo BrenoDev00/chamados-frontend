@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import { SearchInput } from "@/components/shared/search-input";
 import { TableCard } from "@/components/shared/table-card";
+import { TablePagination } from "@/components/shared/table-pagination";
 import {
   TableMessageRow,
   TableSkeletonRows,
@@ -22,11 +23,12 @@ import {
 } from "@/components/ui/table";
 import { TicketFormDialog } from "@/features/tickets/components/ticket-form-dialog";
 import { TicketStatusBadge } from "@/features/tickets/components/ticket-status-badge";
+import { TICKETS_PAGE_SIZE } from "@/features/tickets/api";
 import { useDeleteTicket, useTickets } from "@/features/tickets/hooks";
 import type { Ticket } from "@/features/tickets/types";
-import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useDeleteConfirmation } from "@/hooks/use-delete-confirmation";
-import { formatDate, formatTime, pluralize } from "@/lib/format";
+import { usePaginatedSearch } from "@/hooks/use-paginated-search";
+import { formatDate, formatTime } from "@/lib/format";
 
 const COLUMNS = [
   "ID Chamado",
@@ -49,17 +51,17 @@ const COLUMN_COUNT = COLUMNS.length + 1;
 type FormDialogState = { ticket?: Ticket } | null;
 
 export function TicketsView() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebouncedValue(searchTerm.trim());
+  const { searchTerm, setSearchTerm, debouncedSearchTerm, page, setPage, keepPageInRange } =
+    usePaginatedSearch(TICKETS_PAGE_SIZE);
   const [formDialog, setFormDialog] = useState<FormDialogState>(null);
 
-  const {
-    data: tickets,
-    isPending,
-    isError,
-    isFetching,
-    refetch,
-  } = useTickets(debouncedSearchTerm);
+  const { data, isPending, isError, isFetching, isPlaceholderData, refetch } = useTickets(
+    debouncedSearchTerm,
+    page,
+  );
+  const tickets = data?.items;
+
+  if (data && !isPlaceholderData) keepPageInRange(data.total);
   const ticketDeletion = useDeleteConfirmation<Ticket>(useDeleteTicket(), {
     success: "Chamado excluído com sucesso.",
     error: "Não foi possível excluir o chamado.",
@@ -86,7 +88,17 @@ export function TicketsView() {
       />
 
       <TableCard
-        footer={tickets && `Mostrando ${pluralize(tickets.length, "chamado", "chamados")}`}
+        footer={
+          data && (
+            <TablePagination
+              page={page}
+              pageSize={TICKETS_PAGE_SIZE}
+              totalItems={data.total}
+              onPageChange={setPage}
+              itemLabel={{ singular: "chamado", plural: "chamados" }}
+            />
+          )
+        }
       >
         <Table>
           <TableHeader>

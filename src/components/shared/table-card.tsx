@@ -10,7 +10,7 @@ export function TableCard({ children, footer }: TableCardProps) {
     <div className="overflow-hidden rounded-xl border bg-card">
       {children}
       {footer && (
-        <div className="border-t px-4 py-3 text-xs text-muted-foreground">
+        <div className="border-t px-4 py-2 text-xs text-muted-foreground">
           {footer}
         </div>
       )}

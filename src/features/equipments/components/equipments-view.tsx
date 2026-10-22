@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import { SearchInput } from "@/components/shared/search-input";
 import { TableCard } from "@/components/shared/table-card";
+import { TablePagination } from "@/components/shared/table-pagination";
 import {
   TableMessageRow,
   TableSkeletonRows,
@@ -22,23 +23,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EquipmentFormDialog } from "@/features/equipments/components/equipment-form-dialog";
+import { EQUIPMENTS_PAGE_SIZE } from "@/features/equipments/api";
 import { useDeleteEquipment, useEquipments } from "@/features/equipments/hooks";
 import type { Equipment } from "@/features/equipments/types";
-import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useDeleteConfirmation } from "@/hooks/use-delete-confirmation";
-import { pluralize } from "@/lib/format";
+import { usePaginatedSearch } from "@/hooks/use-paginated-search";
 
 const COLUMN_COUNT = 5;
 
 type FormDialogState = { equipment?: Equipment } | null;
 
 export function EquipmentsView() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebouncedValue(searchTerm.trim());
+  const { searchTerm, setSearchTerm, debouncedSearchTerm, page, setPage, keepPageInRange } =
+    usePaginatedSearch(EQUIPMENTS_PAGE_SIZE);
   const [formDialog, setFormDialog] = useState<FormDialogState>(null);
 
-  const { data, isPending, isError, isFetching, refetch } =
-    useEquipments(debouncedSearchTerm);
+  const { data, isPending, isError, isFetching, isPlaceholderData, refetch } = useEquipments(
+    debouncedSearchTerm,
+    page,
+  );
+
+  if (data && !isPlaceholderData) keepPageInRange(data.total);
+
   const equipmentDeletion = useDeleteConfirmation<Equipment>(useDeleteEquipment(), {
     success: "Equipamento excluído com sucesso.",
     error: "Não foi possível excluir o equipamento.",
@@ -65,7 +71,17 @@ export function EquipmentsView() {
       />
 
       <TableCard
-        footer={data && `Mostrando ${pluralize(data.total, "equipamento", "equipamentos")}`}
+        footer={
+          data && (
+            <TablePagination
+              page={page}
+              pageSize={EQUIPMENTS_PAGE_SIZE}
+              totalItems={data.total}
+              onPageChange={setPage}
+              itemLabel={{ singular: "equipamento", plural: "equipamentos" }}
+            />
+          )
+        }
       >
         <Table>
           <TableHeader>

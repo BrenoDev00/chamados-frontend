@@ -15,11 +15,15 @@ import {
 import type { EquipmentInput } from "@/features/equipments/types";
 import { ticketKeys } from "@/features/tickets/api";
 
-export function useEquipments(searchTerm = "") {
+export function useEquipments(searchTerm: string, page: number) {
   return useQuery({
-    ...equipmentQueries.list(searchTerm),
+    ...equipmentQueries.list(searchTerm, page),
     placeholderData: keepPreviousData,
   });
+}
+
+export function useEquipmentOptions() {
+  return useQuery(equipmentQueries.options());
 }
 
 // chamados exibem dados do equipamento e são excluídos junto com ele

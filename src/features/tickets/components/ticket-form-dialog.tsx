@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useEquipments } from "@/features/equipments/hooks";
+import { useEquipmentOptions } from "@/features/equipments/hooks";
 import { useSaveTicket } from "@/features/tickets/hooks";
 import {
   ticketFormSchema,
@@ -76,7 +76,7 @@ function getDefaultValues(ticket?: Ticket): TicketFormValues {
 export function TicketFormDialog({ ticket, onClose }: TicketFormDialogProps) {
   const isEditing = !!ticket;
   const saveTicket = useSaveTicket();
-  const { data: equipmentList, isPending: isLoadingEquipments } = useEquipments();
+  const { data: equipmentList, isPending: isLoadingEquipments } = useEquipmentOptions();
 
   const {
     register,
